@@ -36,6 +36,7 @@ build/
 *.sublime-workspace
 
 settings.py
+nohup.out
 
 ### Django ###
 *.log

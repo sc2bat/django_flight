@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import  Admins, Books, Airplanes, Airports, Flights, Passports, Users
 from .serializers import AdminsSerializer, BooksSerializer, AirplanesSerializer, AirportsSerializer, FlightsSerializer, PassportsSerializer, UsersSerializer
 from rest_framework.parsers import JSONParser
+from django.db.models import Q
 
 # Create your views here.
 
@@ -111,3 +112,35 @@ def passport(request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def flight_list(request, flight_id):
+
+    obj = Flights.objects.get(flight_id=flight_id)
+
+    if request.method == 'GET':
+        serializer = FlightsSerializer(obj)
+        return JsonResponse(serializer.data, safe=False)
+
+
+@csrf_exempt
+def flight_test(request):
+
+    id = request.GET.get('flight_id')
+    isDeleted = request.GET.get('is_deleted')
+
+    query = Q(flight_id=id) & Q(is_deleted=isDeleted)
+
+    try:
+        obj = Flights.objects.get(query)
+
+        if request.method == 'GET':
+            serializer = FlightsSerializer(obj)
+            return JsonResponse(serializer.data, safe=False)
+
+    except Flights.DoesNotExist:
+        return JsonResponse({'error: 해당 데이터가 존재하지 않습니다.'}, status=404)
+
+    
+

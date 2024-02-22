@@ -15,17 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from griffin_flight import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('griffin_flight/', include('griffin_flight.urls')),
 
-    path('admins/', views.admin),
-    path('books/', views.book),
-    path('users/', views.user),
-    path('flights/', views.flight),
-    path('airplanes/', views.airplane),
-    path('airports/', views.airport),
-    path('passports/', views.passport),
+    # 쿼리된 데이터
+    path('flights/<int:flight_id>/', views.flight_list),
 ]
