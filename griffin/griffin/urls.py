@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('griffin_flight/', include('griffin_flight.urls')),
 
-    # 쿼리된 데이터
+    # url param
     path('flights/<int:flight_id>/', views.flight_list),
 ]
