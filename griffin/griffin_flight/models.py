@@ -6,7 +6,7 @@ class Admins(models.Model):
     admin_id = models.AutoField(primary_key=True)
     admin_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    # password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 
@@ -58,7 +58,7 @@ class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    # password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 

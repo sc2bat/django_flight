@@ -72,6 +72,8 @@ def admin(request):
     if request.method == 'GET':
         id = request.GET.get('admin_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        admin_name = request.GET.get('admin_name', None)
+        email = request.GET.get('email', None)
 
         try:
             query = {}
@@ -79,10 +81,14 @@ def admin(request):
                 query['admin_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if email is not None:
+                query['email'] = email
+            if admin_name is not None:
+                query['admin_name'] = admin_name
 
             if query:
-                obj = Admins.objects.get(**query)
-                serializer = AdminsSerializer(obj)
+                obj = Admins.objects.filter(**query)
+                serializer = AdminsSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Admins.objects.all()
@@ -92,12 +98,28 @@ def admin(request):
         except Admins.DoesNotExist:
             return JsonResponse({}, safe=False)
 
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = AdminsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+
 @csrf_exempt
 def passport(request):
 
     if request.method == 'GET':
         id = request.GET.get('passport_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        gender = request.GET.get('gender', None)
+        first_name = request.GET.get('first_name', None)
+        last_name = request.GET.get('last_name', None)
+        email = request.GET.get('email', None)
+        phone = request.GET.get('phone', None)
+        birthday = request.GET.get('birthday', None)
+        book_id = request.GET.get('book_id', None)
 
         try:
             query = {}
@@ -105,10 +127,24 @@ def passport(request):
                 query['passport_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if gender is not None:
+                query['gender'] = gender
+            if first_name is not None:
+                query['first_name'] = first_name
+            if last_name is not None:
+                query['last_name'] = last_name
+            if email is not None:
+                query['email'] = email
+            if phone is not None:
+                query['phone'] = phone
+            if birthday is not None:
+                query['birthday'] = birthday
+            if book_id is not None:
+                query['book_id'] = book_id
 
             if query:
-                obj = Passports.objects.get(**query)
-                serializer = PassportsSerializer(obj)
+                obj = Passports.objects.filter(**query)
+                serializer = PassportsSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Passports.objects.all()
@@ -118,6 +154,14 @@ def passport(request):
         except Passports.DoesNotExist:
             return JsonResponse({}, safe=False)
 
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = PassportsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
 
 @csrf_exempt
 def flight(request):
@@ -125,6 +169,11 @@ def flight(request):
     if request.method == 'GET':
         id = request.GET.get('flight_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        departure_time = request.GET.get('departure_time', None)
+        arrival_time = request.GET.get('arrival_time', None)
+        departure_loc = request.GET.get('departure_loc', None)
+        arrival_loc = request.GET.get('arrival_loc', None)
+        airplane_id = request.GET.get('airplane_id', None)
 
         try:
             query = {}
@@ -132,10 +181,20 @@ def flight(request):
                 query['flight_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if departure_time is not None:
+                query['departure_time'] = departure_time
+            if arrival_time is not None:
+                query['arrival_time'] = arrival_time
+            if departure_loc is not None:
+                query['departure_loc'] = departure_loc
+            if arrival_loc is not None:
+                query['arrival_loc'] = arrival_loc
+            if airplane_id is not None:
+                query['airplane_id'] = airplane_id
 
             if query:
-                obj = Flights.objects.get(**query)
-                serializer = FlightsSerializer(obj)
+                obj = Flights.objects.filter(**query)
+                serializer = FlightsSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Flights.objects.all()
@@ -144,6 +203,14 @@ def flight(request):
 
         except Flights.DoesNotExist:
             return JsonResponse({}, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = FlightsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
     
 
 @csrf_exempt
@@ -152,6 +219,12 @@ def book(request):
     if request.method == 'GET':
         id = request.GET.get('book_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        user_id = request.GET.get('user_id', None)
+        flight_id = request.GET.get('flight_id', None)
+        class_seat = request.GET.get('class_seat', None)
+        status = request.GET.get('status', None)
+        pay_status = request.GET.get('pay_status', None)
+        
 
         try:
             query = {}
@@ -159,10 +232,21 @@ def book(request):
                 query['book_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if user_id is not None:
+                query['user_id'] = user_id
+            if flight_id is not None:
+                query['flight_id'] = flight_id
+            if class_seat is not None:
+                query['class_seat'] = class_seat
+            if status is not None:
+                query['status'] = status
+            if pay_status is not None:
+                query['pay_status'] = pay_status
+
 
             if query:
-                obj = Books.objects.get(**query)
-                serializer = BooksSerializer(obj)
+                obj = Books.objects.filter(**query)
+                serializer = BooksSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Books.objects.all()
@@ -172,12 +256,25 @@ def book(request):
         except Books.DoesNotExist:
             return JsonResponse({}, safe=False)
 
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = BooksSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
 @csrf_exempt
 def airport(request):
 
     if request.method == 'GET':
         id = request.GET.get('airport_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        airport_code = request.GET.get('airport_code', None)
+        airport_name = request.GET.get('airport_name', None)
+        latitude = request.GET.get('latitude', None)
+        longitude = request.GET.get('longitude', None)
+        country = request.GET.get('country', None)
 
         try:
             query = {}
@@ -185,10 +282,20 @@ def airport(request):
                 query['airport_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if airport_code is not None:
+                query['airport_code'] = airport_code
+            if airport_name is not None:
+                query['airport_name'] = airport_name
+            if latitude is not None:
+                query['latitude'] = latitude
+            if longitude is not None:
+                query['longitude'] = longitude
+            if country is not None:
+                query['country'] = country
 
             if query:
-                obj = Airports.objects.get(**query)
-                serializer = AirportsSerializer(obj)
+                obj = Airports.objects.filter(**query)
+                serializer = AirportsSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Airports.objects.all()
@@ -198,12 +305,23 @@ def airport(request):
         except Airports.DoesNotExist:
             return JsonResponse({}, safe=False)
 
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = AirportsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
 @csrf_exempt
 def user(request):
 
     if request.method == 'GET':
         id = request.GET.get('user_id', None)
         is_deleted = request.GET.get('is_deleted', None)
+        user_name = request.GET.get('user_name', None)
+        email = request.GET.get('email', None)
+
 
         try:
             query = {}
@@ -211,10 +329,14 @@ def user(request):
                 query['user_id'] = id
             if is_deleted is not None:
                 query['is_deleted'] = is_deleted
+            if user_name is not None:
+                query['user_name'] = user_name
+            if email is not None:
+                query['email'] = email
 
             if query:
-                obj = Users.objects.get(**query)
-                serializer = UsersSerializer(obj)
+                obj = Users.objects.filter(**query)
+                serializer = UsersSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Users.objects.all()
@@ -223,6 +345,14 @@ def user(request):
 
         except Users.DoesNotExist:
             return JsonResponse({}, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = UsersSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
 def airplane(request):
@@ -239,8 +369,8 @@ def airplane(request):
                 query['is_deleted'] = is_deleted
 
             if query:
-                obj = Airplanes.objects.get(**query)
-                serializer = AirplanesSerializer(obj)
+                obj = Airplanes.objects.filter(**query)
+                serializer = AirplanesSerializer(obj, many=True)
                 return JsonResponse(serializer.data, safe=False)
             else:
                 objs = Airplanes.objects.all()
@@ -249,3 +379,11 @@ def airplane(request):
 
         except Airplanes.DoesNotExist:
             return JsonResponse({}, safe=False)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = AirplanesSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
