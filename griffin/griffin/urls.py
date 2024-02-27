@@ -24,4 +24,6 @@ urlpatterns = [
 
     # url param
     path('flights/<int:flight_id>/', views.flight_list),
+
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

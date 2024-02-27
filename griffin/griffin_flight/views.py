@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import  Admins, Books, Airplanes, Airports, Flights, Passports, Users
+from .models import Admins, Books, Airplanes, Airports, Flights, Passports, Users
 from .serializers import AdminsSerializer, BooksSerializer, AirplanesSerializer, AirportsSerializer, FlightsSerializer, PassportsSerializer, UsersSerializer
 from rest_framework.parsers import JSONParser
-from django.db.models import Q
+from django.db.models import Q, F
 
 # Create your views here.
 
@@ -387,3 +387,30 @@ def airplane(request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
+
+@csrf_exempt
+def payment_join(request):
+    if request.method == 'GET':
+        result_set = Books.objects.select_related('user_id', 'flight_id').prefetch_related('passports').annotate(
+            user_name=F('user_id__user_name'),
+            departure_time=F('flight_id__departure_time'),
+            departure_code=F('flight_id__departure_loc__airport_code'),
+            departure_name=F('flight_id__departure_loc__airport_name'),
+            arrival_code=F('flight_id__arrival_loc__airport_code'),
+            arrival_name=F('flight_id__arrival_loc__airport_name'),
+            first_name=F('passports__first_name'),
+            last_name=F('passports__last_name'),
+        ).values(
+        'book_id',
+        'user_id', 
+        'user_name',
+        'flight_id', 
+        'departure_time',
+        'class_seat',
+        'status', 'pay_status', 'pay_amount',
+        'departure_code', 'departure_name',
+        'arrival_code', 'arrival_name',
+        'first_name', 'last_name'
+    )
+
+    return JsonResponse({'result': list(result_set)})
