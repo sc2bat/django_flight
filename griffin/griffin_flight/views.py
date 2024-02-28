@@ -391,26 +391,37 @@ def airplane(request):
 @csrf_exempt
 def payment_join(request):
     if request.method == 'GET':
-        result_set = Books.objects.select_related('user_id', 'flight_id').prefetch_related('passports').annotate(
-            user_name=F('user_id__user_name'),
-            departure_time=F('flight_id__departure_time'),
-            departure_code=F('flight_id__departure_loc__airport_code'),
-            departure_name=F('flight_id__departure_loc__airport_name'),
-            arrival_code=F('flight_id__arrival_loc__airport_code'),
-            arrival_name=F('flight_id__arrival_loc__airport_name'),
-            first_name=F('passports__first_name'),
-            last_name=F('passports__last_name'),
-        ).values(
-        'book_id',
-        'user_id', 
-        'user_name',
-        'flight_id', 
-        'departure_time',
-        'class_seat',
-        'status', 'pay_status', 'pay_amount',
-        'departure_code', 'departure_name',
-        'arrival_code', 'arrival_name',
-        'first_name', 'last_name'
-    )
+        id = request.GET.get('user_id', None)
+        status = request.GET.get('status', None)
+        pay_status = request.GET.get('pay_status', None)
+        book_id = request.GET.get('book_id', None)
 
-    return JsonResponse({'result': list(result_set)})
+        queryset = Books.objects.select_related('user_id', 'flight_id').prefetch_related('passports').annotate(
+                    user_name=F('user_id__user_name'),
+                    departure_time=F('flight_id__departure_time'),
+                    departure_code=F('flight_id__departure_loc__airport_code'),
+                    departure_name=F('flight_id__departure_loc__airport_name'),
+                    arrival_code=F('flight_id__arrival_loc__airport_code'),
+                    arrival_name=F('flight_id__arrival_loc__airport_name'),
+                    first_name=F('passports__first_name'),
+                    last_name=F('passports__last_name'),
+                ).values(
+                    'book_id',
+                    'user_id', 
+                    'user_name',
+                    'flight_id', 
+                    'departure_time',
+                    'class_seat',
+                    'status', 'pay_status', 'pay_amount',
+                    'departure_code', 'departure_name',
+                    'arrival_code', 'arrival_name',
+                    'first_name', 'last_name'
+                )
+
+        if pay_status:
+            queryset = queryset.filter(pay_status=pay_status)
+        else:
+            pass
+        
+        result_set = list(queryset)
+        return JsonResponse({'result': result_set})
