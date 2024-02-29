@@ -17,13 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from griffin_flight import views
+from griffin_flight.views import UserList, UserDetails, GroupList
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('griffin_flight/', include('griffin_flight.urls')),
 
     # url param
     path('flights/<int:flight_id>/', views.flight_list),
 
+    # auth urls
+    path('admin/', admin.site.urls),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('users/', UserList.as_view()),
+    path('users/<pk>/', UserDetails.as_view()),
+    path('groups/', GroupList.as_view()),
 ]

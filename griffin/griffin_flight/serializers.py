@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Admins, Books, Airplanes, Airports, Flights, Passports, Users
+from django.contrib.auth.models import User, Group
 
 class AdminsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,3 +36,14 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ['user_id', 'user_name', 'email', 'created_at', 'is_deleted']
+
+# auth serializers
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', "first_name", "last_name")
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ("name", )
