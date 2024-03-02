@@ -5,23 +5,21 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import logout as auth_logout
 from .forms import MyUserCreationForm
+from rest_framework.parsers import JSONParser
 
 @csrf_exempt
 def login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
-            # username = form.cleaned_data['username']
-            # password = form.cleaned_data['password']
-            # user = authenticate(request, username=username, password=password)
             auth_login(request, form.get_user())
-            return JsonResponse({"status": 1})
+            return JsonResponse({"username": form.get_user().username, "email": form.get_user().email})
         else:
-            return JsonResponse({"status": 0})
+            return JsonResponse({"status": 0, "case": form.errors})
 
     else:
         form = AuthenticationForm()
-        return JsonResponse({"status": 0})
+        return JsonResponse({"status": 0, "case": form.errors})
 
 @csrf_exempt
 def logout(request):
@@ -34,11 +32,10 @@ def signup(request):
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            auth_login(request, user)
             return JsonResponse({"status": 1})
         else:
             # form = MyUserCreationForm()
             return JsonResponse({"status": 0, "case": form.errors})
     
     else:
-        return JsonResponse({"status": 0, "case": 2})
+        return JsonResponse({"status": 0})
