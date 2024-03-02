@@ -10,4 +10,7 @@ urlpatterns = [
     path('airports/', views.airport, name='airport'),
     path('users/', views.user),
     path('airplanes/', views.airplane),
+    path('admins_test/', views.admin_test),
+
+    path('payment/', views.payment_join)
 ]

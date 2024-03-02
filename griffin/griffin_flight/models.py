@@ -6,7 +6,7 @@ class Admins(models.Model):
     admin_id = models.AutoField(primary_key=True)
     admin_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    # password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 
@@ -58,7 +58,7 @@ class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    # password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 
@@ -73,6 +73,7 @@ class Books(models.Model):
     class_seat = models.CharField(max_length=100)
     status = models.IntegerField()
     pay_status = models.IntegerField()
+    pay_amount = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 
@@ -88,7 +89,7 @@ class Passports(models.Model):
     email = models.CharField(max_length=100)
     phone = models.CharField(max_length=100)
     birthday = models.CharField(max_length=100)
-    book_id = models.ForeignKey(Books, on_delete=models.RESTRICT, db_column='book_id')
+    book_id = models.OneToOneField(Books, on_delete=models.RESTRICT, db_column='book_id')
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.SmallIntegerField(default=0)
 
