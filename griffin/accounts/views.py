@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import logout as auth_logout
+from .forms import MyUserCreationForm
 
 @csrf_exempt
 def login(request):
@@ -27,16 +28,17 @@ def logout(request):
     auth_logout(request)
     return JsonResponse({"status": 1})
 
+@csrf_exempt
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
             return JsonResponse({"status": 1})
         else:
-            form = UserCreationForm()
-            return JsonResponse({"status": 0})
+            # form = MyUserCreationForm()
+            return JsonResponse({"status": 0, "case": form.errors})
     
     else:
-        return JsonResponse({"status": 0})
+        return JsonResponse({"status": 0, "case": 2})
