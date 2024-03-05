@@ -211,7 +211,6 @@ def flight(request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
-    
 
 @csrf_exempt
 def book(request):
@@ -425,3 +424,25 @@ def payment_join(request):
         
         result_set = list(queryset)
         return JsonResponse({'result': result_set})
+
+
+
+
+@csrf_exempt
+def updateBook(request):
+    param_book_id = 1
+
+    post = Books.objects.get(book_id=param_book_id)
+
+    post.title = '새로운 타이틀'
+    post.content = '새로운 내용'
+    post.save()
+    
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = BooksSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
