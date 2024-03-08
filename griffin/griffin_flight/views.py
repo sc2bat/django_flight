@@ -479,7 +479,7 @@ def get_flights(request):
             param_arrival_loc = request.GET['arrival_loc']
         except KeyError as e:
             return JsonResponse({'error': str(e)}, status=400)
-            
+
         query1 = f"""
             SELECT *
             FROM flights f
@@ -505,8 +505,11 @@ def get_flights(request):
         serializer1 = FlightsSerializer(result1, many=True)
         serializer2 = FlightsSerializer(result2, many=True)
 
-        combined_results = serializer1.data + serializer2.data
+        grouped_results = {
+            "from_flight" : serializer1.data,
+            "to_flight" : serializer2.data
+        }
 
-        return JsonResponse(combined_results, safe=False)
+        return JsonResponse(grouped_results, safe=False)
     else :
         return JsonResponse({'error' : 'method error'}, status = 405)
