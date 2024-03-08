@@ -42,6 +42,7 @@ class Airports(models.Model):
 
 class Flights(models.Model):
     flight_id = models.AutoField(primary_key=True)
+    flight_date = models.CharField(max_length=100)
     departure_time = models.CharField(max_length=100)
     arrival_time = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)

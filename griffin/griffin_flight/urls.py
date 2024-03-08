@@ -13,5 +13,6 @@ urlpatterns = [
     path('airplanes/', views.airplane),
     path('admins_test/', views.admin_test),
 
-    path('payment/', views.payment_join)
+    path('payment/', views.payment_join),
+    path('flights/search', views.get_flights)
 ]
