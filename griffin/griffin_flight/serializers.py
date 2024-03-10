@@ -11,6 +11,11 @@ class BooksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Books
         fields = '__all__'
+
+class BooksUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Books
+        fields = ['book_id', 'user_id', 'flight_id']
         
 class AirplanesSerializer(serializers.ModelSerializer):
     class Meta:

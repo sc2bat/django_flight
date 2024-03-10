@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Admins, Books, Airplanes, Airports, Flights, Passports, Users
-from .serializers import AdminsSerializer, BooksSerializer, AirplanesSerializer, AirportsSerializer, FlightsSerializer, PassportsSerializer, UsersSerializer
+from .serializers import AdminsSerializer, BooksSerializer, AirplanesSerializer, AirportsSerializer, FlightsSerializer, PassportsSerializer, UsersSerializer, BooksUpdateSerializer
 from rest_framework.parsers import JSONParser
 from django.db.models import Q, F
+from django.db import connection
 
 # Create your views here.
 
@@ -211,7 +212,6 @@ def flight(request):
             serializer.save()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
-    
 
 @csrf_exempt
 def book(request):
@@ -425,3 +425,91 @@ def payment_join(request):
         
         result_set = list(queryset)
         return JsonResponse({'result': result_set})
+
+
+
+# book update
+@csrf_exempt
+def updateBook(request):
+    if request.method == 'POST':
+        
+        jsonData = JSONParser().parse(request)
+
+        print(jsonData)
+
+        try : 
+            bookData = Books.objects.get(book_id=jsonData['book_id'])
+
+            if 'class_seat' in jsonData and jsonData['class_seat'] is not None:
+                bookData.class_seat = jsonData['class_seat']
+            if 'status' in jsonData and jsonData['status'] is not None:
+                bookData.status = jsonData['status']
+            if 'pay_status' in jsonData and jsonData['pay_status'] is not None:
+                bookData.pay_status = jsonData['pay_status']
+            if 'pay_amount' in jsonData and jsonData['pay_amount'] is not None:
+                bookData.pay_amount = jsonData['pay_amount']
+            if 'is_deleted' in jsonData and jsonData['is_deleted'] is not None:
+                bookData.is_deleted = jsonData['is_deleted']
+
+            bookData.save()
+            
+            query = {}
+            if jsonData['book_id'] is not None:
+                query['book_id'] = bookData.book_id
+
+            if query:
+                obj = Books.objects.filter(**query)
+                serializer = BooksSerializer(obj, many=True)
+                return JsonResponse(serializer.data, safe=False, status=201)
+        except ObjectDoesNotExist :
+            return JsonResponse({'error' : 'book_id error'}, status = 405)
+    else :
+        return JsonResponse({'error' : 'method error'}, status = 405)
+
+
+
+
+@csrf_exempt
+def get_flights(request):
+    if request.method == 'GET':
+        try:
+            param_from_flight_date = request.GET['from_flight_date']
+            param_to_flight_date = request.GET['to_flight_date']
+            param_departure_loc = request.GET['departure_loc']
+            param_arrival_loc = request.GET['arrival_loc']
+        except KeyError as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+        query1 = f"""
+            SELECT *
+            FROM flights f
+            WHERE flight_date = {param_from_flight_date}
+            AND departure_loc = {param_departure_loc}
+            AND arrival_loc = {param_arrival_loc}
+        """
+        query2 = f"""
+            SELECT *
+            FROM flights f
+            WHERE flight_date = {param_to_flight_date}
+            AND departure_loc = {param_arrival_loc}
+            AND arrival_loc = {param_departure_loc}
+        """
+        
+        result1 = Flights.objects.filter(flight_date=param_from_flight_date, 
+                                          departure_loc=param_departure_loc,
+                                          arrival_loc=param_arrival_loc)
+        result2 = Flights.objects.filter(flight_date=param_to_flight_date, 
+                                          departure_loc=param_arrival_loc,
+                                          arrival_loc=param_departure_loc)
+
+        serializer1 = FlightsSerializer(result1, many=True)
+        serializer2 = FlightsSerializer(result2, many=True)
+
+        grouped_results = {
+            "from_flight" : serializer1.data,
+            "to_flight" : serializer2.data
+        }
+
+        return JsonResponse(grouped_results, safe=False)
+    else :
+        return JsonResponse({'error' : 'method error'}, status = 405)
