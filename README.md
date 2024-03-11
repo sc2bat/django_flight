@@ -3,10 +3,15 @@
 ## 장고 서버 프로젝트
 이 프로젝트는 장고 웹 애플리케이션으로 Flutter 프로젝트를 위한 API 서버입니다. 
 
+#### Flutter GitLink
+항공편 예약 앱 : https://github.com/sc2bat/griffin_flight
+관리자 웹 페이지 : https://github.com/sc2bat/griffin_admin_web
+
 ### 사용된 스킬
 언어 Python 3.8
 데이터베이스 MySQL 8.0 
 서버 Ubuntu 22.04.4 LTS
+프레임워크 Django 5.0.2
 
 ### 기능
 사용자 등록 및 로그인
