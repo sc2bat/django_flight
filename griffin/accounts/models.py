@@ -7,6 +7,7 @@ class Users(models.Model):
     user_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    user_last_login = models.DateTimeField(auto_now_add=False)
     is_deleted = models.SmallIntegerField(default=0)
 
     class Meta:

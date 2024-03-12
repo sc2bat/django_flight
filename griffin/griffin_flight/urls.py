@@ -10,6 +10,7 @@ urlpatterns = [
     path('books/update/', views.updateBook),
     path('airports/', views.airport, name='airport'),
     path('users/', views.user),
+    path('users/list', views.user_list),
     path('airplanes/', views.airplane),
     path('admins_test/', views.admin_test),
 

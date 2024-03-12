@@ -513,3 +513,10 @@ def get_flights(request):
         return JsonResponse(grouped_results, safe=False)
     else :
         return JsonResponse({'error' : 'method error'}, status = 405)
+
+@csrf_exempt
+def user_list(request):
+    if request.method == 'GET':
+        objs = Users.objects.all()
+        serializer = UsersSerializer(objs, many=True)
+        return JsonResponse(serializer.data, safe=False)
