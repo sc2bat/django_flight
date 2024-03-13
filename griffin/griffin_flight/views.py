@@ -399,6 +399,7 @@ def payment_join(request):
         queryset = Books.objects.select_related('user_id', 'flight_id').prefetch_related('passports').annotate(
                     user_name=F('user_id__user_name'),
                     departure_time=F('flight_id__departure_time'),
+                    arrival_time=F('flight_id__arrival_time'),
                     departure_code=F('flight_id__departure_loc__airport_code'),
                     departure_name=F('flight_id__departure_loc__airport_name'),
                     arrival_code=F('flight_id__arrival_loc__airport_code'),
@@ -411,6 +412,7 @@ def payment_join(request):
                     'user_name',
                     'flight_id', 
                     'departure_time',
+                    'arrival_time',
                     'class_seat',
                     'status', 'pay_status', 'pay_amount',
                     'departure_code', 'departure_name',
